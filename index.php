@@ -444,7 +444,7 @@
           <img src="./source/img/theam/athif.jpeg" alt="Khazi Abdul Athif">
           <h3>Khazi Abdul Athifulla</h3>
           <p>
-            563CS23018 <br/>
+            
             khaziatifulla@gmail.com
           </p>
         </div>
@@ -453,7 +453,7 @@
           <img src="./source/img/theam/sameer.jpeg" alt="Syed Sameer S">
           <h3>Syed Sameer S</h3>
           <p>
-            563CS23044 <br/>
+            
             syedsameers2007@gmail.com
 
           </p>
@@ -463,7 +463,7 @@
           <img src="./source/img/theam/umar.jpeg" alt="Umar Farooq">
           <h3>Umar Farooq</h3>
           <p>
-            563CS24704
+            
             umarfarooqkhan078@gmail.com
           </p>
         </div>

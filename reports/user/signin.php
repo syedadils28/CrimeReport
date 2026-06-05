@@ -4,19 +4,31 @@ if(isset($_SESSION['userid'])){ header("Location: dashboard.php"); exit(); }
 
 $msg='';
 if($_SERVER['REQUEST_METHOD']==='POST'){
-    $email = mysqli_real_escape_string($con,trim($_POST['email']));
-    $pass  = md5(trim($_POST['password']));
-    $q     = mysqli_query($con,"SELECT * FROM tbl_user WHERE Email='$email' AND Password='$pass' AND Status=1");
-    if(mysqli_num_rows($q)===1){
-        $row=mysqli_fetch_assoc($q);
-        $_SESSION['userid']=$row['id'];
-        $_SESSION['user_name']=$row['FullName'];
-        $_SESSION['user_email']=$row['Email'];
-        header("Location: dashboard.php");
-        exit();
+    $email = trim($_POST['email']);
+
+    // Fetch user by email only first
+    $stmt = $con->prepare("SELECT * FROM tbl_user WHERE Email=? AND Status=1");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if($result->num_rows === 1){
+        $row = $result->fetch_assoc();
+
+        // Now verify password using password_verify()
+        if(password_verify(trim($_POST['password']), $row['Password'])){
+            $_SESSION['userid']     = $row['id'];
+            $_SESSION['user_name']  = $row['FullName'];
+            $_SESSION['user_email'] = $row['Email'];
+            header("Location: dashboard.php");
+            exit();
+        } else {
+            $msg="<div class='alert alert-danger'><i class='fas fa-times-circle'></i> Invalid email or password!</div>";
+        }
     } else {
         $msg="<div class='alert alert-danger'><i class='fas fa-times-circle'></i> Invalid email or password!</div>";
     }
+    $stmt->close();
 }
 ?>
 <!DOCTYPE html>
@@ -45,7 +57,8 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
         <div style="margin-bottom:12px;">
           <label class="auth-label">Email</label>
           <div class="auth-input-wrap">
-            <input type="email" name="email" class="auth-input" placeholder="Email" required value="<?php echo isset($_POST['email'])?htmlspecialchars($_POST['email']):''; ?>">
+            <input type="email" name="email" class="auth-input" placeholder="Email" required
+              value="<?php echo isset($_POST['email'])?htmlspecialchars($_POST['email']):''; ?>">
             <i class="fas fa-user auth-icon"></i>
           </div>
         </div>
@@ -61,8 +74,8 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     </div>
     <div class="auth-divider">OR</div>
     <div class="auth-footer">
-      Not Registered Yet? 
-      <button ><a href="signup.php" class="btn-signup"><i class="fas fa-user-plus"></i> Sign up!</a></button>
+      Not Registered Yet?
+      <button><a href="signup.php" class="btn-signup"><i class="fas fa-user-plus"></i> Sign up!</a></button>
     </div>
   </div>
 </div>
